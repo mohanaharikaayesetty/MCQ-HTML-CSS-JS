@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: bisque;
+      margin: 0;
+    }
+
+    .quiz-container {
+      background:white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: left;
+      border:5px solid black;
+      border-radius: 10px;
+    }
+
+    button {
+      display: block;
+      margin: 20px auto 0 auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #848dee; /* Green */
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #62d6dd;
+    }
+
+    #results {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .question {
+      color: #333;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .answers label {
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <div id="quiz"></div>
+    <button id="submit">Submit Quiz</button>
+    <div id="results"></div>
+  </div>
+  <script>
+    const quizContainer = document.getElementById('quiz');
+    const resultsContainer = document.getElementById('results');
+    const submitButton = document.getElementById('submit');
+
+    const myQuestions = [
+      {
+        question: "Which planet is known as the Red Planet?",
+        answers: {
+          a: "Earth",
+          b: "Mars",
+          c: "Jupiter"
+        },
+        correctAnswer: "b"
+      },
+      {
+        question: "What is the largest ocean on Earth?",
+        answers: {
+          a: "Atlantic Ocean",
+          b: "Indian Ocean",
+          c: "Pacific Ocean"
+        },
+        correctAnswer: "c"
+      },
+      {
+        question: "Who wrote 'Romeo and Juliet'?",
+        answers: {
+          a: "Charles Dickens",
+          b: "William Shakespeare",
+          c: "Jane Austen"
+        },
+        correctAnswer: "b"
+      },
+      {
+        question: "What is the chemical symbol for water?",
+        answers: {
+          a: "O2",
+          b: "H2O",
+          c: "CO2"
+        },
+        correctAnswer: "b"
+      },
+      {
+        question: "Who painted the Mona Lisa?",
+        answers: {
+          a: "Vincent van Gogh",
+          b: "Pablo Picasso",
+          c: "Leonardo da Vinci"
+        },
+        correctAnswer: "c"
+      }
+    ];
+
+    function buildQuiz() {
+      const output = [];
+
+      myQuestions.forEach((currentQuestion, questionNumber) => {
+        const answers = [];
+
+        for (const letter in currentQuestion.answers) {
+          answers.push(
+            `<label>
+              <input type="radio" name="question${questionNumber}" value="${letter}">
+              ${letter} :
+              ${currentQuestion.answers[letter]}
+            </label>`
+          );
+        }
+
+        output.push(
+          `<div class="question"> ${currentQuestion.question} </div>
+          <div class="answers"> ${answers.join('')} </div>`
+        );
+      });
+
+      quizContainer.innerHTML = output.join('');
+    }
+
+    function showResults() {
+      const answerContainers = quizContainer.querySelectorAll('.answers');
+
+      let numCorrect = 0;
+      let numIncorrect = 0;
+
+      myQuestions.forEach((currentQuestion, questionNumber) => {
+        const answerContainer = answerContainers[questionNumber];
+        const selector = `input[name=question${questionNumber}]:checked`;
+        const userAnswer = (answerContainer.querySelector(selector) || {}).value;
+
+        if (userAnswer === currentQuestion.correctAnswer) {
+          numCorrect++;
+          answerContainers[questionNumber].style.color = 'green';
+        } else {
+          numIncorrect++;
+          answerContainers[questionNumber].style.color = 'red';
+        }
+      });
+
+      resultsContainer.innerHTML = `${numCorrect} out of ${myQuestions.length}`;
+
+      const quizContainerElement = document.querySelector('.quiz-container');
+      if (numCorrect === myQuestions.length) {
+        quizContainerElement.style.backgroundColor = 'lightgreen';
+      } else if (numIncorrect === myQuestions.length) {
+        quizContainerElement.style.backgroundColor = 'lightcoral';
+      } else {
+        quizContainerElement.style.backgroundColor = 'white'; // Default color
+      }
+    }
+
+    buildQuiz();
+
+    submitButton.addEventListener('click', showResults);
+  </script>
+</body>
+</html>
